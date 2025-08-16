@@ -1,0 +1,11 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "pdm.h": "c",
+        "spi_eccp.h": "c",
+        "sal_api.h": "c",
+        "debug.h": "c",
+        "app_cfg.h": "c",
+        "main.h": "c"
+    }
+}

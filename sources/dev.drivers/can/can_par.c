@@ -60,12 +60,21 @@ CANTimingParam_t ArbitrationPhaseTimingPar[ CAN_CONTROLLER_NUMBER ] =
    /* BRP,   PROP,   TSEG1,  TSEG2,  SJW,    TDC,    TDCO,   TDCF */
 #ifdef CAN_CHANNEL_0
     { 1,     47,     16,     16,     16,     0,      0,      0 },  //channel 0, speed : 500Kbps / sample point : 80%
+    // { 20,   6,    7,   2,   1,   0,    0,    0 },  // 125kbps, sample point ≈ 87.5%
+
+
 #endif
 #ifdef CAN_CHANNEL_1
     { 1,     47,     16,     16,     16,     0,      0,      0 },  //channel 1, speed : 500Kbps / sample point : 80%
+    // { 20,   6,    7,   2,   1,   0,    0,    0 },  // 125kbps, sample point ≈ 87.5%
+
+
 #endif
 #ifdef CAN_CHANNEL_2
     { 1,     47,     16,     16,     16,     0,      0,      0 },  //channel 2, speed : 500Kbps / sample point : 80%
+    // { 20,   6,    7,   2,   1,   0,    0,    0 },  // 125kbps, sample point ≈ 87.5%
+
+
 #endif
 };
 

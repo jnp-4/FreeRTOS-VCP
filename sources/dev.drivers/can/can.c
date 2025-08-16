@@ -66,6 +66,8 @@ CANErrorType_t CAN_Init
     for( ucCh = 0 ; ucCh < CAN_CONTROLLER_NUMBER ; ucCh++ )
     {
         psControllerInfo = &CANDriverInfo.dControllerInfo[ ucCh ];
+
+        psControllerInfo->cMode = CAN_MODE_NO_INITIALIZATION;
         psControllerInfo->cChannelHandle = ucCh;
 
         ( void ) CAN_PortingDisableControllerInterrupts( psControllerInfo->cChannelHandle );

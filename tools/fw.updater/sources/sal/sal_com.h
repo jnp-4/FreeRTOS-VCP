@@ -240,12 +240,13 @@ typedef enum SALEventOption
  * Task Priority Setting
  */
 typedef enum SALTaskPriority
-{
+{  //숫자가 작을 수록 우선순위가 높음
     SAL_PRIO_APP_CFG                    = 2,  /**< APP TASK START task                  */
     SAL_PRIO_POWER_MANAGER              = 3,  /**< Power Manager APP task               */
     SAL_PRIO_IPC_CONTROL                = 3,  /**< IPC Control task                     */
     SAL_PRIO_SYSTEM_MON                 = 4,  /**< System Monitoring APP task           */
-    SAL_PRIO_CAN_DEMO                   = 4,  /**< CAN DEMO APP task                    */
+    SAL_PRIO_CAN_DEMO                   = 3,  /**< CAN DEMO APP task    원래는 4였음     */
+    SAL_PRIO_AUTO_PARKING               = 4,  /**< AutoParking task  새로 만든거  jyp    */
     SAL_PRIO_AUDIO_TEST                 = 5,  /**< Audio Test APP task                  */
     SAL_PRIO_VSDR_MONITOR               = 5,  /**< Vehicle Signal DEMO APP task         */
     SAL_PRIO_SPILED_DEMO                = 6,  /**< SPILED Demo Task                     */

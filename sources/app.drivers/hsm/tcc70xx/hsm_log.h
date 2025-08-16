@@ -116,7 +116,7 @@
 
 #ifdef COLOR_TAG
 /* color tagging */
-#define TRACE _DLOG(NORMAL_COLOR "[%s:%d]\n", TLOG_TAG, __LINE__)
+#define  _DLOG(NORMAL_COLOR "[%s:%d]\n", TLOG_TAG, __LINE__)
 #define VLOG(fmt, ...) \
     _VLOG(BLUE_COLOR "[VERBOSE][%s][%d]" NORMAL_COLOR " " fmt, TLOG_TAG, __LINE__, ##__VA_ARGS__)
 
@@ -136,7 +136,7 @@
     _BLOG(""fmt,##__VA_ARGS__)
 #else
 /* No color tagging (To avoid Codesonar warning )*/
-#define TRACE _DLOG("[%s:%d]\n", TLOG_TAG, __LINE__)
+#define  _DLOG("[%s:%d]\n", TLOG_TAG, __LINE__)
 #define VLOG(fmt, ...)      \
     _VLOG(                  \
         "[VERBOSE][%s][%d]" \

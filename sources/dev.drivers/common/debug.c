@@ -527,7 +527,15 @@ sint32 DBG_Printfi
                     fmaxString        = 0;
                     break;
                 }
+                case 0x75 /* 'u' */ :       // 새로 추가한 것
+                {
+                    str = string;
+                    i = *(const sint32 *)args;  // 입력 값을 받아옴
 
+                    length = DBG_Print10((uint32)i, str);  // 이미 있는 10진수 변환 함수 사용
+                    fmaxString = 0;
+                    break;
+                }
                 default:
                 {
                     /* format is not supported */

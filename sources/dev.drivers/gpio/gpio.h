@@ -16,7 +16,7 @@
 #ifndef MCU_BSP_GPIO_HEADER
 #define MCU_BSP_GPIO_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_GPIO == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_GPIO == 1 )
 
 #include <sal_internal.h>
 
@@ -282,7 +282,7 @@ SALRetCode_t GPIO_IntExtSet
     uint32                               uiGpio
 );
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_GPIO == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_GPIO == 1 )
 
 #endif  // MCU_BSP_GPIO_HEADER
 

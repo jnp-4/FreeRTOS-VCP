@@ -33,7 +33,7 @@
 #define CAN_DEMO_TASK_STK_SIZE          (2048)
 #define CAN_MAX_TEST_MSG_NUM            (9UL)
 
-//#define CAN_DEMO_RESPONSE_TEST          //for CAN response test
+// #define CAN_DEMO_RESPONSE_TEST          //for CAN response test
 
 typedef struct CANDemoTestInfo
 {
@@ -66,6 +66,9 @@ void CAN_DemoCreateApp
 (
     void
 );
+
+// jam 5초 동안 입력 안 받게 하기 위함 
+void CAN_DemoFlushRxAll(void);
 
 #endif  // ( MCU_BSP_SUPPORT_CAN_DEMO == 1 )
 

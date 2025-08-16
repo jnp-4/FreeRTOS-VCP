@@ -16,7 +16,7 @@
 #ifndef MCU_BSP_PDM_DEV_HEADER
 #define MCU_BSP_PDM_DEV_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 
 /*
 ***************************************************************************************************
@@ -295,7 +295,7 @@
 ****************************************************************************/
 #define PDM_GetPeriSelectionShift(X)    ((10UL) + ((X) * (0x02UL)))
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 
 #endif  // MCU_BSP_PDM_DEV_HEADER
 

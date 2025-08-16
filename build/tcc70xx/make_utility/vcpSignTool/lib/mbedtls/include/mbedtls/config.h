@@ -867,14 +867,14 @@
 /**
  * \def MBEDTLS_MEMORY_BACKTRACE
  *
- * Include backtrace information with each allocated block.
+ * Include back information with each allocated block.
  *
  * Requires: MBEDTLS_MEMORY_BUFFER_ALLOC_C
- *           GLIBC-compatible backtrace() an backtrace_symbols() support
+ *           GLIBC-compatible back() an back_symbols() support
  *
- * Uncomment this macro to include backtrace information
+ * Uncomment this macro to include back information
  */
-//#define MBEDTLS_MEMORY_BACKTRACE
+//#define MBEDTLS_MEMORY_BACK
 
 /**
  * \def MBEDTLS_PK_RSA_ALT_SUPPORT

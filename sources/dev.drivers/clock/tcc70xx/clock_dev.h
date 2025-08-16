@@ -16,7 +16,7 @@
 #ifndef MCU_BSP_CLOCK_DEV_HEADER
 #define MCU_BSP_CLOCK_DEV_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_CLOCK == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_CLOCK == 1 )
 
 #include <sal_internal.h>
 
@@ -210,7 +210,7 @@ typedef struct CLOCK_PCLK_CTRL
     uint32  uiDivVal;
 } CLOCKPclkCtrl_t;
 
-#endif  // ( MCU_BSP_CLOCK_DEV_HEADER == 1 )
+//#endif  // ( MCU_BSP_CLOCK_DEV_HEADER == 1 )
 
 #endif  // MCU_BSP_SUPPORT_DRIVER_CLOCK
 

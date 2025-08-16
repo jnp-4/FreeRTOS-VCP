@@ -91,7 +91,7 @@ void mbedtls_memory_buffer_set_verify( int verify );
  * \brief   Print out the status of the allocated memory (primarily for use
  *          after a program should have de-allocated all memory)
  *          Prints out a list of 'still allocated' blocks and their stack
- *          trace if MBEDTLS_MEMORY_BACKTRACE is defined.
+ *           if MBEDTLS_MEMORY_BACK is defined.
  */
 void mbedtls_memory_buffer_alloc_status( void );
 
@@ -127,8 +127,8 @@ void mbedtls_memory_buffer_alloc_cur_get( size_t *cur_used, size_t *cur_blocks )
  *
  *          Prints out first failure if MBEDTLS_MEMORY_DEBUG is defined.
  *          Prints out full header information if MBEDTLS_MEMORY_DEBUG
- *          is defined. (Includes stack trace information for each block if
- *          MBEDTLS_MEMORY_BACKTRACE is defined as well).
+ *          is defined. (Includes stack  information for each block if
+ *          MBEDTLS_MEMORY_BACK is defined as well).
  *
  * \return             0 if verified, 1 otherwise
  */

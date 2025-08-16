@@ -16,8 +16,8 @@
 #ifndef MCU_BSP_CAN_HEADER
 #define MCU_BSP_CAN_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
-
+//#if ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
+#include "can_config.h"
 /**************************************************************************************************
 *                                            DEFINITIONS
 **************************************************************************************************/
@@ -362,7 +362,7 @@ CANErrorType_t CAN_RegisterCallbackFunctionError
     CANNotifyErrorEventCB               pCbFnError
 );
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
 
 #endif  // MCU_BSP_CAN_HEADER
 

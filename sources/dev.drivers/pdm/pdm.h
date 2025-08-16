@@ -16,7 +16,7 @@
 #ifndef MCU_BSP_PDM_HEADER
 #define MCU_BSP_PDM_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 
 /****************************************************************************************************
 *                                             INCLUDE FILES
@@ -357,7 +357,7 @@ SALRetCode_t PDM_SetConfig
     PDMModeConfig_t *                   pModeConfig
 );
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 
 #endif  // MCU_BSP_PDM_HEADER
 

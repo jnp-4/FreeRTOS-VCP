@@ -13,16 +13,16 @@
 ***************************************************************************************************
 */
 
-#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 
 #include "bsp.h"
 #include "gpio.h"
 #include "pdm.h"
 #include "pmio.h"
-
-#if ( MCU_BSP_SUPPORT_DRIVER_FMU == 1 )
+#include "clock_dev.h"
+//#if ( MCU_BSP_SUPPORT_DRIVER_FMU == 1 )
     #include "fmu.h"
-#endif
+//#endif
 
 /**************************************************************************************************
 *                                             LOCAL VARIABLES
@@ -2199,5 +2199,5 @@ SALRetCode_t PDM_SetConfig
     return ret;
 }
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_PDM == 1 )
 

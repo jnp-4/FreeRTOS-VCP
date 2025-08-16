@@ -16,14 +16,13 @@
 #ifndef CAN_CONFIG_HEADER
 #define CAN_CONFIG_HEADER
 
-#if ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
+//#if ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
 
 /**************************************************************************************************
 *                                           INCLUDE FILES
 **************************************************************************************************/
 
 #include "debug.h"
-
 
 /**************************************************************************************************
 *                                            DEFINITIONS
@@ -155,7 +154,7 @@ typedef enum CANCh
 *                                        FUNCTION PROTOTYPES
 **************************************************************************************************/
 
-#endif  // ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
+//#endif  // ( MCU_BSP_SUPPORT_DRIVER_CAN == 1 )
 
 #endif  // CAN_CONFIG_HEADER
 

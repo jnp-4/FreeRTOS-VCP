@@ -33,6 +33,11 @@
 #include "can_porting.h"
 #include "can_demo.h"
 
+//jam 메시지 큐 사용
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "semphr.h"
+#include "task.h"
 
 /**************************************************************************************************
 *                                            DEFINITIONS
@@ -48,6 +53,51 @@ static CANDemoTestInfo_t sTestInfo;
 static CANFlagValue_t gCompletedFlag[3];
 static CANFlagValue_t gErrorFlag[3];
 static uint32 gReceiveFlag[3];
+
+// // main.c 에서 사용하는 전역변수
+// CANMessage_t    main_sRxMsg;
+// volatile uint8 gMainRxReady;
+
+//jam 전역 변수 gMainRxReady 를 사용하여 main.c의 CAN_StartTask에서 폴링방식으로 값 받지 않게 하기 위해 큐 이용하고자 함!
+// 수신 큐 핸들(큐 자체가 아니라 큐 핸들이다 (즉, 큐를 가리키기만 함))
+static QueueHandle_t sCanRxQ = NULL;    // sCanRxQ에서 s는 그저 static 변수여서 넣음
+
+// main.c에서 생성한 큐 핸들을
+// can_demo.c의 sCanRxQ에 저장하여 동일한 큐를 가리키게 함.
+// 큐 자체를 복사하는 것이 아니라, 큐를 가리키는 포인터 값을 저장한다.
+void CAN_DemoSetRxQueue(QueueHandle_t q)
+{
+    sCanRxQ = q;
+}
+
+// 5초 동안 0x4B 무시위해 선언
+typedef enum {
+    MODE_IDLE = 0,
+    MODE_AUTOPARK,
+    MODE_AEB_HOLD
+} SystemMode_t;
+
+extern volatile SystemMode_t gMode;
+extern volatile BaseType_t   gAebAcceptClear;
+
+void CAN_DemoFlushRxAll(void)
+{
+    taskENTER_CRITICAL();
+    /* 1) CAN 드라이버/하드웨어 메시지 RAM 비우기 */
+    for (uint8 ch = 0U; ch < CAN_CONTROLLER_NUMBER; ++ch) {
+        (void)CAN_InitMessage(ch);   // 드라이버 잔여 메시지 클리어
+        gReceiveFlag[ch] = 0UL;      // 수신 플래그도 리셋
+    }
+
+    /* 2) 애플리케이션 수신 큐 비우기 */
+    if (sCanRxQ != NULL) {
+        CANMessage_t dump;
+        while (xQueueReceive(sCanRxQ, &dump, 0) == pdTRUE) {
+            /* drop */
+        }
+    }
+    taskEXIT_CRITICAL();
+}
 
 #ifdef CAN_DEMO_RESPONSE_TEST
 static CANMessage_t sTxPreMessageInfo =
@@ -65,16 +115,17 @@ static CANMessage_t sTxPreMessageInfo =
 static CANMessage_t sTxMessageInfo[CAN_MAX_TEST_MSG_NUM] =
 {
 #if 1 /* Misra2012:9.3 - Partially Uninitialized Array */
-   /* BufferType,                 Index, ESI, ExtendedID, RTR, ID,    FD, BRS, MM,   EventFIFO, DLC, DATA */
-    { CAN_TX_BUFFER_TYPE_DBUFFER, 0,     0,   0,          0,   0x11,  1,  1,   0xFF, 1,         1,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_DBUFFER, 1,     0,   1,          0,   0x22,  1,  1,   0xFF, 1,         2,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_DBUFFER, 2,     0,   0,          0,   0x33,  1,  1,   0xFF, 1,         3,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_DBUFFER, 3,     0,   1,          0,   0x44,  1,  1,   0xFF, 1,         4,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x55,  1,  1,   0xFF, 1,         5,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   1,          0,   0x66,  1,  1,   0xFF, 1,         6,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x77,  1,  1,   0xFF, 1,         7,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   1,          0,   0x88,  1,  1,   0xFF, 1,         8,   {0, /* Data is definded as much as DLC in sending function */} },
-    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x99,  1,  1,   0xFF, 1,         12,  {0, /* Data is definded as much as DLC in sending function */} },
+    //jam FD 0 넣는 것으로 수정(그래야 통신됨(MCP2515는 FD 지원 안하는 듯))
+   // BufferType,                 Index, ESI, ExtendedID, RTR, ID,    FD, BRS, MM,   EventFIFO, DLC, DATA
+    { CAN_TX_BUFFER_TYPE_DBUFFER, 0,     0,   0,          0,   0x11,  0,  0,   0xFF, 1,         1,   {0} },
+    { CAN_TX_BUFFER_TYPE_DBUFFER, 1,     0,   0,          0,   0x22,  0,  0,   0xFF, 1,         2,   {0} },
+    { CAN_TX_BUFFER_TYPE_DBUFFER, 2,     0,   0,          0,   0x33,  0,  0,   0xFF, 1,         3,   {0} },
+    { CAN_TX_BUFFER_TYPE_DBUFFER, 3,     0,   0,          0,   0x44,  0,  0,   0xFF, 1,         4,   {0} },
+    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x55,  0,  0,   0xFF, 1,         5,   {0} },
+    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x66,  0,  0,   0xFF, 1,         6,   {0} },
+    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x77,  0,  0,   0xFF, 1,         7,   {0} },
+    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x88,  0,  0,   0xFF, 1,         8,   {0} },
+    { CAN_TX_BUFFER_TYPE_FIFO,    0,     0,   0,          0,   0x99,  0,  0,   0xFF, 1,         8,   {0} },
 
 #else
    /* BufferType,                 Index, ESI, ExtendedID, RTR, ID,    FD, BRS, MM,   EventFIFO, DLC, DATA */
@@ -358,34 +409,62 @@ static void CAN_DemoReceive
         while( 1 )
         {
             uiRxMsgNum = CAN_CheckNewRxMessage( ucCh );
-
-            if( 0UL < uiRxMsgNum )
-            {
-                ( void ) CAN_GetNewRxMessage( ucCh, &sRxMsg );
-
-                mcu_printf( "[CAN DEMO]\n" );
-                mcu_printf( "< Channel %d Received Message Information >\n", ucCh );
-                mcu_printf( "***********************************************************************************\n" );
-                mcu_printf( "[ID] : 0x%X, [DATA SIZE] : %d, [DATA] : \r\n", sRxMsg.mId, sRxMsg.mDataLength );
-
-                for( ucMsgLength = 1U ; ucMsgLength < ( sRxMsg.mDataLength + 1U ) ; ucMsgLength++ )
-                {
-                    mcu_printf( "0x%02X ", sRxMsg.mData[ ucMsgLength - 1U ] );
-
-                    if( ( ucMsgLength % 16U ) == 0U ) {
-                        mcu_printf( "\n" );
-                    }
-                }
-
-                mcu_printf( "\n" );
-                mcu_printf( "***********************************************************************************\n" );
-                mcu_printf( "\n" );
-            }
-            else
-            {
-                mcu_printf(" [CAN DEMO] No message\n" );
+            if (uiRxMsgNum == 0UL) {
                 break;
             }
+
+
+            ( void ) CAN_GetNewRxMessage( ucCh, &sRxMsg );
+
+            /* AEB 5초 홀드 중에는 '0x4B'(브레이크 해제) 프레임을 큐에 올리지 않고 버림 */
+            if (gMode == MODE_AEB_HOLD && gAebAcceptClear == pdFALSE) 
+            {
+                if (sRxMsg.mDataLength >= 1U && sRxMsg.mData[0] == 0x4BU) 
+                {
+                    /* 하드웨어/드라이버 FIFO에서 꺼낸 이 프레임은 여기서 버림 → 애플리케이션 큐로 못 올라감 */
+                    continue;  // 다음 수신 프레임으로
+                }
+            }
+
+            if (sCanRxQ != NULL)
+            {
+                /* ISR/Task 컨텍스트 모두 대응 */
+                if (xPortGetInterruptNestingCount() == 0UL)
+                {
+                    /* Task 컨텍스트 */
+                    (void)xQueueSend(sCanRxQ, &sRxMsg, 0);
+                }
+                else
+                {
+                    /* ISR 컨텍스트 */
+                    BaseType_t xHPW = pdFALSE;
+                    (void)xQueueSendFromISR(sCanRxQ, &sRxMsg, &xHPW);
+                    portYIELD_FROM_ISR(xHPW);
+                }
+            }
+
+            /*
+            mcu_printf( "[CAN DEMO]\n" );
+            mcu_printf( "< Channel %d Received Message Information >\n", ucCh );
+            mcu_printf( "***********************************************************************************\n" );
+            mcu_printf( "[ID] : 0x%X, [DATA SIZE] : %d, [DATA] : \r\n", main_sRxMsg.mId, main_sRxMsg.mDataLength );
+
+            
+            for( ucMsgLength = 1U ; ucMsgLength < ( main_sRxMsg.mDataLength + 1U ) ; ucMsgLength++ )
+            {
+                mcu_printf( "0x%02X ", main_sRxMsg.mData[ ucMsgLength - 1U ] );
+
+                if( ( ucMsgLength % 16U ) == 0U ) {
+                    mcu_printf( "\n" );
+                }
+            }
+            
+            mcu_printf( "\n" );
+            mcu_printf( "***********************************************************************************\n" );
+            mcu_printf( "\n" );
+            */
+
+
         }
 
         gReceiveFlag[ ucCh ] = 0;
@@ -529,6 +608,8 @@ sint32 CAN_DemoInitialize
     void
 )
 {
+    // mcu_printf("### ENTER CAN_DemoInitialize ###\n");
+
     sint32          ret;
     CANErrorType_t  result;
 
